@@ -1,20 +1,19 @@
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import styled from "styled-components";
-import { RxCross2 } from "react-icons/rx";
-import AnimateText from "@/animations/AnimateText";
 import { useDispatch, useSelector } from "react-redux";
 import { RegisterFormInputData } from "@/constants/data/formdata";
 import { RegisterUser } from "@/features/auth/authReducer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 
 const RegisterModal = () => {
   const dispatch = useDispatch();
-  const { registerisSuccess, registerisLoading } = useSelector(
+  const { registerisSuccess, registerisLoading,currentUser } = useSelector(
     (store) => store.auth
   );
+  const navigate = useNavigate()
+
   const [formvalue, setFormValue] = useState({
     name: "",
     username: "",
@@ -39,7 +38,15 @@ const RegisterModal = () => {
     e.preventDefault();
     dispatch(RegisterUser(formvalue));
   };
+  useEffect(() => {
+    if (registerisSuccess) {
+      const timer = setTimeout(() => {
+        navigate('/login')
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
 
+  }, [registerisSuccess])
   return (
     <RegisterModalStyles
       className="w-full h-screen"
